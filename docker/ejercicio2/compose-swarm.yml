@@ -1,0 +1,21 @@
+version: "2"
+services:
+    app:
+        image: marcosnils/app
+        #build:
+        #    context: ./
+        #command: python /code/app.py
+        links:
+            - redis
+        networks:
+            - default
+        expose:
+            - "5000"
+    redis:
+        image: redis
+        networks:
+            - default
+
+networks:
+    default:
+        driver: overlay
