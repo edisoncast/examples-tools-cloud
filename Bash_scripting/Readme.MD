@@ -1,3 +1,3 @@
-##Useful resources
+# Useful resources
 
 https://devhints.io/bash
