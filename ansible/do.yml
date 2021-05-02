@@ -1,0 +1,47 @@
+- hosts: ejemplo
+  remote_user: root
+
+  vars:
+
+    create_user: edison
+
+    packages: ['curl', 'git', 'ufw']
+
+    copy_local_key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/ejemplo.pub') }}"
+
+  tasks:
+  
+    - name: Create Edison's user
+      user:
+        name: "{{ create_user }}"
+        shell: /bin/bash
+        groups: sudo
+        append: true
+        create_home: true
+        state: present
+
+    - name: Add ssh key
+      authorized_key: 
+         user: "{{ create_user }}"
+         state: present
+         key: "{{ copy_local_key }}"
+
+    - name: Update packages
+      apt:
+          update_cache: yes
+          upgrade: yes 
+
+    - name: Install packages
+      apt: name="{{ packages }}" state=latest
+
+    - name: UFW ssh
+      ufw:
+          rule: allow
+          name: OpenSSH
+    
+    - name: UFW deny
+      ufw:
+          state: enabled
+          policy: deny
+          direction: incoming
+
